@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chúc Mừng Sinh Nhật</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      min-height: 100vh; color: #fff; overflow-x: hidden;
+      background: #020510;
+    }
+    .sky-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      overflow: hidden;
+      background: linear-gradient(180deg, #020510 0%, #0a1035 45%, #12082a 100%);
+      animation: skyPulse 8s ease-in-out infinite alternate;
+    }
+    @keyframes skyPulse {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.08); }
+    }
+    .sky-bg::before, .sky-bg::after {
+      content: ""; position: absolute; inset: -50%; border-radius: 50%;
+      animation: auroraMove 20s ease-in-out infinite alternate;
+    }
+    .sky-bg::before {
+      background: radial-gradient(ellipse, rgba(100,150,255,0.3) 0%, transparent 70%);
+      animation-duration: 18s;
+    }
+    .sky-bg::after {
+      background: radial-gradient(ellipse, rgba(255,107,157,0.24) 0%, transparent 65%);
+      animation-duration: 24s; animation-delay: -8s;
+    }
+    @keyframes auroraMove {
+      0% { transform: translate(-10%, -5%) rotate(0deg) scale(1); }
+      50% { transform: translate(15%, 10%) rotate(12deg) scale(1.12); }
+      100% { transform: translate(-5%, 12%) rotate(-8deg) scale(1.05); }
+    }
+    .cloud-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.14;
+      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.18) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(255,255,255,0.12) 0%, transparent 45%);
+      animation: cloudDrift 40s linear infinite;
+    }
+    @keyframes cloudDrift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-100px, 50px); }
+    }
+    #bgCanvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px);
+      pointer-events: none; z-index: 1; opacity: 0.3;
+    }
+    .orb1 {
+      width: 220px; height: 220px; background: #6b8cff; top: 18%; left: 8%;
+      animation: orbDrift1 16s ease-in-out infinite, orbPulse 3s ease-in-out infinite;
+    }
+    .orb2 {
+      width: 200px; height: 200px; background: #c44dff; bottom: 22%; right: 10%;
+      animation: orbDrift2 20s ease-in-out infinite, orbPulse 4s ease-in-out infinite 1s;
+    }
+    @keyframes orbDrift1 {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(70px, -50px); }
+      66% { transform: translate(-35px, 45px); }
+    }
+    @keyframes orbDrift2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-60px, -70px); }
+    }
+    @keyframes orbPulse {
+      0%, 100% { opacity: 0.22; }
+      50% { opacity: 0.38; }
+    }
+    .screen {
+      display: none; min-height: 100vh; flex-direction: column;
+      align-items: center; justify-content: center; padding: 20px;
+      position: relative; z-index: 2;
+    }
+    .screen.active { display: flex; }
+    #loginScreen { text-align: center; }
+    #loginScreen h1 { font-size: 2rem; margin-bottom: 8px; text-shadow: 0 0 24px rgba(255,255,255,0.3); }
+    #loginScreen p { opacity: 0.85; margin-bottom: 18px; }
+    #loginScreen input {
+      padding: 14px 20px; font-size: 1.1rem; border: 2px solid #7b9fff;
+      border-radius: 12px; background: rgba(255,255,255,0.08); color: #fff;
+      width: min(300px, 92vw); margin-bottom: 12px;
+    }
+    .btn {
+      padding: 13px 28px; font-size: 1rem; border: none; border-radius: 12px;
+      cursor: pointer; background: linear-gradient(90deg, #ff6b9d, #7b9fff);
+      color: #fff; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(123,159,255,0.45); }
+    .btn-secondary { background: rgba(255,255,255,0.12); }
+    .error { color: #ff9a9a; margin-top: 10px; min-height: 1.2em; }
+    .wizard-layout {
+      display: flex; gap: 20px; width: min(980px, 98vw);
+      align-items: flex-start; justify-content: center;
+    }
+    .wizard-main { flex: 1; min-width: 0; }
+    .wizard-sidebar {
+      width: 270px; flex-shrink: 0;
+      background: rgba(5,10,40,0.65); border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 16px; padding: 16px; backdrop-filter: blur(14px);
+      max-height: 85vh; overflow-y: auto;
+    }
+    .wizard-sidebar h3 { font-size: 1rem; margin-bottom: 10px; }
+    #chosenList { list-style: none; font-size: 0.86rem; line-height: 1.55; }
+    #chosenList li {
+      padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    #chosenList .swatch {
+      width: 14px; height: 14px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.4); flex-shrink: 0;
+    }
+    #wizardScreen h2 { text-align: center; font-size: 1.3rem; margin-bottom: 6px; }
+    .step-indicator { text-align: center; opacity: 0.75; margin-bottom: 12px; font-size: 0.9rem; }
+    .options {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+      max-height: 36vh; overflow-y: auto; padding: 6px;
+    }
+    .option {
+      padding: 10px 14px; border: 2px solid rgba(255,255,255,0.18);
+      border-radius: 10px; cursor: pointer; transition: all 0.2s;
+      min-width: 78px; text-align: center; font-size: 0.88rem;
+      background: rgba(0,0,0,0.35);
+    }
+    .option:hover, .option.selected {
+      border-color: #7b9fff; background: rgba(123,159,255,0.22);
+      box-shadow: 0 0 14px rgba(123,159,255,0.35);
+    }
+    .preview-cake {
+      width: 88px; height: 88px; margin: 12px auto 6px;
+      border: 4px solid rgba(255,255,255,0.3);
+      transition: all 0.35s; box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+    }
+    .preview-cake.round { border-radius: 50%; }
+    .preview-cake.square { border-radius: 12px; }
+    .preview-cake.heart { border-radius: 50% 50% 42% 42%; transform: rotate(-45deg); }
+    .wizard-nav { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    #cake3dScreen {
+      padding: 0; overflow: hidden; width: 100%;
+      min-height: 100vh; position: relative;
+    }
+    #floatingPhotos {
+      position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden;
+    }
+    .float-photo {
+      position: absolute; width: 86px; height: 86px; object-fit: cover;
+      border-radius: 14px; box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.3); opacity: 0;
+      animation: floatPhoto var(--dur) ease-in-out infinite;
+      animation-delay: var(--delay); left: var(--x);
+    }
+    @keyframes floatPhoto {
+      0%, 100% { transform: translateY(105vh) rotate(-10deg) scale(0.82); opacity: 0; }
+      12% { opacity: 0.88; }
+      50% { transform: translateY(38vh) rotate(6deg) scale(1.04); opacity: 0.92; }
+    }
+    #canvas3d {
+      width: 100%; height: 100vh; display: block;
+      position: relative; z-index: 10;
+      background: transparent !important;
+    }
+    .wish-orbit-label {
+      color: #fff; font-size: 1rem; font-weight: 600; white-space: nowrap;
+      padding: 10px 20px; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255,107,157,0.6), rgba(123,159,255,0.5));
+      border: 1px solid rgba(255,255,255,0.55);
+      box-shadow: 0 0 28px rgba(255,200,255,0.55);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+      pointer-events: none; user-select: none;
+      animation: wishGlow 2s ease-in-out infinite alternate;
+    }
+    @keyframes wishGlow {
+      0% { box-shadow: 0 0 20px rgba(255,180,255,0.4); }
+      100% { box-shadow: 0 0 36px rgba(123,159,255,0.7); }
+    }
+    #musicToggle {
+      position: fixed; top: 12px; right: 12px; z-index: 1000;
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.55);
+      color: #fff; font-size: 1.25rem; cursor: pointer; display: none;
+    }
+    #musicToggle.visible { display: block; }
+    #musicHint {
+      position: fixed; top: 64px; right: 12px; z-index: 1000;
+      background: rgba(0,0,0,0.78); padding: 8px 12px; border-radius: 8px;
+      font-size: 0.84rem; display: none; cursor: pointer; max-width: 220px;
+    }
+    @media (max-width: 800px) {
+      .wizard-layout { flex-direction: column; }
+      .wizard-sidebar { width: 100%; max-height: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky-bg"></div>
+  <div class="cloud-layer"></div>
+  <canvas id="bgCanvas"></canvas>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="audio/song.mp3" type="audio/mpeg" />
+  </audio>
+  <button id="musicToggle" type="button" title="Bật/tắt nhạc">🔊</button>
+  <div id="musicHint">Nhấn để bật nhạc</div>
+
+  <section id="loginScreen" class="screen active">
+    <h1>🎂 Chúc mừng sinh nhật</h1>
+    <p>Nhập mật khẩu để bắt đầu</p>
+    <input type="password" id="passwordInput" placeholder="Mật khẩu..." autocomplete="off" />
+    <br />
+    <button class="btn" id="btnEnter" type="button">Vào & bật nhạc 🎵</button>
+    <p class="error" id="loginError"></p>
+  </section>
+
+  <section id="wizardScreen" class="screen">
+    <div class="wizard-layout">
+      <div class="wizard-main">
+        <p class="step-indicator" id="stepLabel">Bước 1</p>
+        <h2 id="stepTitle">Chọn hình bánh</h2>
+        <div class="options" id="stepOptions"></div>
+        <div class="wizard-nav">
+          <button class="btn btn-secondary" id="btnPrev" type="button" style="display:none">← Quay lại</button>
+          <button class="btn" id="btnNext" type="button">Tiếp →</button>
+        </div>
+      </div>
+      <aside class="wizard-sidebar">
+        <h3>🧁 Đã chọn</h3>
+        <ul id="chosenList"></ul>
+        <div class="preview-cake round" id="previewCake"></div>
+        <small id="previewText" style="opacity:0.8;display:block;text-align:center;font-size:0.8rem">Xem trước bánh</small>
+      </aside>
+    </div>
+  </section>
+
+  <section id="cake3dScreen" class="screen">
+    <div id="floatingPhotos"></div>
+    <canvas id="canvas3d"></canvas>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    // ========== CẤU HÌNH — SỬA Ở ĐÂY ==========
+    const PASSWORD = "24052003";
+    const MUSIC_VOLUME = 1.0; // 0.0 - 1.0 (to hơn: 1.0)
+
+    const WISHES = [
+      "Chúc cô Linh sinh nhật vui vẻ 🎉",
+      "Chúc cô đỗ thạc sĩiiiii",
+      "Nếu cô không dạy cô vẫn nhớ kèo điểm 9 của em đấy",
+      "Chưa gì đã sắp U30👩‍🦳",
+      "Happy New Year",
+      "Xinh đẹp - Thành công - Hạnh phúc và thật nhiều tiền tài",
+      "Không biết cô không dạy nữa cô văn mới có phát mạng cho em ko😭",
+      "Tổng kết là Chúc cô tuổi mới mạnh khỏe nhiều tiền và thành công trong đường giáo viên của mình",
+      "50 năm sau quay lại thăm trường thấy Linh làm hiệu trưởng :)))",
+      "Mà cô có mời em ăn sinh nhật cô không=))",
+      "Mỗi năm em làm cho cô 1 cái nhé",
+      "À cô nhớ capcut giật giật đấy",
+      "Tuy em làm nó còn nhiều lỗi cô thông cảm"
+    ];
+
+    const PHOTOS = [
+       	"images/1.jpg",
+  	"images/2.jpg",
+  	"images/3.jpg",
+	"images/4.jpg",
+  	"images/5.jpg",
+  	"images/6.jpg",
+        "images/7.jpg",
+  	"images/8.jpg",
+  	"images/9.jpg",
+	"images/10.jpg",
+  	"images/11.jpg",
+  	"images/12.jpg",
+	"images/13.jpg",
+  	"images/14.jpg",
+  	"images/15.jpg"
+    ];
+    // ==========================================
+
+    const LABELS = {
+      shape: { round: "Tròn", square: "Vuông", heart: "Tim" },
+      tiers: { 1: "1 tầng", 2: "2 tầng", 3: "3 tầng" },
+      baseFlavor: { vanilla: "Vani", chocolate: "Sô-cô-la", strawberry: "Dâu", coffee: "Cà phê", lemon: "Chanh", coconut: "Dừa" },
+      frostingType: { buttercream: "Kem bông", creamcheese: "Cream cheese", ganache: "Ganache", mirror: "Mirror" },
+      filling: { none: "Không nhân", strawberry: "Kem dâu", choco: "Chocolate", cheese: "Phô mai", blueberry: "Việt quất", caramel: "Caramel" },
+      sprinkles: { none: "Không", sugar: "Đường", choco_chip: "Socola chip", pearl: "Ngọc trai", rainbow: "Cầu vồng" },
+      border: { none: "Không viền", piping: "Đường kem", dots: "Chấm bi", ribbon: "Ruy băng" },
+      topping: { strawberry: "Dâu", blueberry: "Việt quất", choco: "Socola", cherry: "Cherry", star: "Sao", flower: "Hoa", bow: "Nơ", kiwi: "Kiwi", oreo: "Oreo", macaron: "Macaron", cookie: "Cookie" }
+    };
+
+    const cakeChoices = {
+      shape: "round", tiers: 2, baseColor: "#f5d0a9", baseFlavor: "vanilla",
+      frostingType: "buttercream", frosting: "#ff69b4", filling: "strawberry",
+      sprinkles: "rainbow", border: "piping", plateColor: "#ffffff",
+      toppings: [], candleCount: 5, candleColor: "#ffee88"
+    };
+
+    const WIZARD_STEPS = [
+      { title: "Hình bánh", key: "shape", options: [
+        { label: "⭕ Tròn", value: "round" }, { label: "⬜ Vuông", value: "square" }, { label: "💗 Tim", value: "heart" }
+      ]},
+      { title: "Số tầng", key: "tiers", options: [
+        { label: "1 tầng", value: 1 }, { label: "2 tầng", value: 2 }, { label: "3 tầng", value: 3 }
+      ]},
+      { title: "Màu bột bánh", key: "baseColor", options: [
+        { label: "Kem", value: "#f5d0a9" }, { label: "Sô-cô-la", value: "#5c4033" },
+        { label: "Matcha", value: "#90c695" }, { label: "Red velvet", value: "#8b2942" }, { label: "Vani", value: "#fff8e7" }
+      ]},
+      { title: "Vị bột", key: "baseFlavor", options: [
+        { label: "Vani", value: "vanilla" }, { label: "Sô-cô-la", value: "chocolate" },
+        { label: "Dâu", value: "strawberry" }, { label: "Cà phê", value: "coffee" },
+        { label: "Chanh", value: "lemon" }, { label: "Dừa", value: "coconut" }
+      ]},
+      { title: "Loại kem", key: "frostingType", options: [
+        { label: "Kem bông", value: "buttercream" }, { label: "Cream cheese", value: "creamcheese" },
+        { label: "Ganache", value: "ganache" }, { label: "Mirror", value: "mirror" }
+      ]},
+      { title: "Màu kem", key: "frosting", options: [
+        { label: "Hồng", value: "#ff69b4" }, { label: "Trắng", value: "#fffafa" },
+        { label: "Tím", value: "#c44dff" }, { label: "Mint", value: "#98ff98" },
+        { label: "Vàng", value: "#ffd700" }, { label: "Đen", value: "#2d2d2d" }
+      ]},
+      { title: "Nhân bánh", key: "filling", options: [
+        { label: "Không", value: "none" }, { label: "Kem dâu", value: "strawberry" },
+        { label: "Chocolate", value: "choco" }, { label: "Phô mai", value: "cheese" },
+        { label: "Việt quất", value: "blueberry" }, { label: "Caramel", value: "caramel" }
+      ]},
+      { title: "Rắc / chip", key: "sprinkles", options: [
+        { label: "Không", value: "none" }, { label: "Đường", value: "sugar" },
+        { label: "Socola chip", value: "choco_chip" }, { label: "Ngọc trai", value: "pearl" }, { label: "Cầu vồng", value: "rainbow" }
+      ]},
+      { title: "Viền", key: "border", options: [
+        { label: "Không", value: "none" }, { label: "Đường kem", value: "piping" },
+        { label: "Chấm bi", value: "dots" }, { label: "Ruy băng", value: "ribbon" }
+      ]},
+      { title: "Màu đĩa", key: "plateColor", options: [
+        { label: "Trắng", value: "#ffffff" }, { label: "Vàng gold", value: "#d4af37" },
+        { label: "Hồng", value: "#ffc0cb" }, { label: "Đen", value: "#1a1a1a" }
+      ]},
+      { title: "Topping (nhiều)", key: "toppings", multi: true, options: [
+        { label: "🍓 Dâu", value: "strawberry" }, { label: "🫐 Việt quất", value: "blueberry" },
+        { label: "🍫 Socola", value: "choco" }, { label: "🍒 Cherry", value: "cherry" },
+        { label: "⭐ Sao", value: "star" }, { label: "🌸 Hoa", value: "flower" },
+        { label: "🎀 Nơ", value: "bow" }, { label: "🥝 Kiwi", value: "kiwi" },
+        { label: "🍪 Oreo", value: "oreo" }, { label: "🧁 Macaron", value: "macaron" }, { label: "🍪 Cookie", value: "cookie" }
+      ]},
+      { title: "Màu nến", key: "candleColor", options: [
+        { label: "Vàng", value: "#ffee88" }, { label: "Hồng", value: "#ff69b4" },
+        { label: "Xanh", value: "#7ec8e3" }, { label: "Trắng", value: "#fffafa" }, { label: "Tím", value: "#c44dff" }
+      ]},
+      { title: "Số nến (1–23)", key: "candleCount", options:
+        Array.from({ length: 23 }, (_, i) => ({ label: String(i + 1), value: i + 1 }))
+      }
+    ];
+
+    let wizardIndex = 0, musicOn = false, sceneInited = false;
+    let flameGroups = [], glitterMeshes = [];
+    const bgMusic = document.getElementById("bgMusic");
+    const musicToggle = document.getElementById("musicToggle");
+    const musicHint = document.getElementById("musicHint");
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function burstConfetti() {
+      if (typeof confetti === "function") {
+        confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+      }
+    }
+
+    function startMusic() {
+      bgMusic.volume = MUSIC_VOLUME;
+      const playPromise = bgMusic.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          musicOn = true;
+          musicToggle.classList.add("visible");
+          musicHint.style.display = "none";
+        }).catch(() => {
+          musicHint.style.display = "block";
+          musicHint.textContent = "Nhấn để bật nhạc (kiểm tra audio/song.mp3)";
+        });
+      }
+    }
+
+    musicToggle.addEventListener("click", () => {
+      if (bgMusic.paused) {
+        bgMusic.volume = MUSIC_VOLUME;
+        bgMusic.play();
+        musicToggle.textContent = "🔊";
+        musicOn = true;
+      } else {
+        bgMusic.pause();
+        musicToggle.textContent = "🔇";
+        musicOn = false;
+      }
+    });
+    musicHint.addEventListener("click", startMusic);
+
+    document.getElementById("btnEnter").addEventListener("click", () => {
+      const pw = document.getElementById("passwordInput").value;
+      const err = document.getElementById("loginError");
+      if (pw === PASSWORD) {
+        err.textContent = "";
+        sessionStorage.setItem("unlocked", "1");
+        startMusic();
+        burstConfetti();
+        showScreen("wizardScreen");
+        renderWizardStep();
+      } else {
+        err.textContent = "Sai mật khẩu!";
+      }
+    });
+
+    document.getElementById("passwordInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") document.getElementById("btnEnter").click();
+    });
+
+    function getFrostMatProps(type) {
+      const m = { roughness: 0.72, metalness: 0 };
+      if (type === "creamcheese") m.roughness = 0.48;
+      if (type === "ganache") { m.roughness = 0.18; m.metalness = 0.22; }
+      if (type === "mirror") { m.roughness = 0.04; m.metalness = 0.68; }
+      return m;
+    }
+
+    function renderChosenSummary() {
+      const ul = document.getElementById("chosenList");
+      const items = [
+        { label: "Hình", text: LABELS.shape[cakeChoices.shape] },
+        { label: "Tầng", text: LABELS.tiers[cakeChoices.tiers] },
+        { label: "Màu bột", color: cakeChoices.baseColor },
+        { label: "Vị", text: LABELS.baseFlavor[cakeChoices.baseFlavor] },
+        { label: "Kem", text: LABELS.frostingType[cakeChoices.frostingType] },
+        { label: "Màu kem", color: cakeChoices.frosting },
+        { label: "Nhân", text: LABELS.filling[cakeChoices.filling] },
+        { label: "Rắc", text: LABELS.sprinkles[cakeChoices.sprinkles] },
+        { label: "Viền", text: LABELS.border[cakeChoices.border] },
+        { label: "Đĩa", color: cakeChoices.plateColor },
+        { label: "Topping", text: cakeChoices.toppings.length
+            ? cakeChoices.toppings.map(t => LABELS.topping[t] || t).join(", ") : "Chưa chọn" },
+        { label: "Nến", text: `${cakeChoices.candleCount} cây` }
+      ];
+      ul.innerHTML = items.map(it => {
+        const sw = it.color ? `<span class="swatch" style="background:${it.color}"></span>` : "";
+        const val = it.color || it.text || "—";
+        return `<li>${sw}<span><strong>${it.label}:</strong> ${val}</span></li>`;
+      }).join("");
+    }
+
+    function updatePreview() {
+      const el = document.getElementById("previewCake");
+      el.className = "preview-cake " + cakeChoices.shape;
+      el.style.background = cakeChoices.frosting;
+      el.style.boxShadow = `inset 0 -16px 0 ${cakeChoices.baseColor}, 0 0 18px ${cakeChoices.frosting}88`;
+      document.getElementById("previewText").textContent =
+        `${cakeChoices.tiers} tầng · ${cakeChoices.toppings.length} topping · ${cakeChoices.candleCount} nến`;
+      renderChosenSummary();
+    }
+
+    function renderWizardStep() {
+      const step = WIZARD_STEPS[wizardIndex];
+      document.getElementById("stepLabel").textContent = `Bước ${wizardIndex + 1} / ${WIZARD_STEPS.length}`;
+      document.getElementById("stepTitle").textContent = step.title;
+      document.getElementById("btnPrev").style.display = wizardIndex > 0 ? "inline-block" : "none";
+      document.getElementById("btnNext").textContent =
+        wizardIndex === WIZARD_STEPS.length - 1 ? "🎂 Xem bánh 3D!" : "Tiếp →";
+
+      const container = document.getElementById("stepOptions");
+      container.innerHTML = "";
+      const current = cakeChoices[step.key];
+
+      step.options.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.textContent = opt.label;
+        if (step.multi && current.includes(opt.value)) div.classList.add("selected");
+        else if (!step.multi && current === opt.value) div.classList.add("selected");
+
+        div.addEventListener("click", () => {
+          if (step.multi) {
+            const i = cakeChoices.toppings.indexOf(opt.value);
+            if (i >= 0) cakeChoices.toppings.splice(i, 1);
+            else cakeChoices.toppings.push(opt.value);
+            div.classList.toggle("selected");
+          } else {
+            cakeChoices[step.key] = opt.value;
+            container.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+            div.classList.add("selected");
+          }
+          updatePreview();
+        });
+        container.appendChild(div);
+      });
+      updatePreview();
+    }
+
+    document.getElementById("btnPrev").addEventListener("click", () => {
+      if (wizardIndex > 0) { wizardIndex--; renderWizardStep(); }
+    });
+
+    document.getElementById("btnNext").addEventListener("click", () => {
+      if (wizardIndex < WIZARD_STEPS.length - 1) {
+        wizardIndex++;
+        renderWizardStep();
+      } else {
+        burstConfetti();
+        showScreen("cake3dScreen");
+        buildFloatingPhotos();
+        init3D();
+      }
+    });
+
+    function buildFloatingPhotos() {
+      const wrap = document.getElementById("floatingPhotos");
+      wrap.innerHTML = "";
+      PHOTOS.forEach((src, i) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.className = "float-photo";
+        img.alt = "Ảnh " + (i + 1);
+        img.style.setProperty("--x", (6 + (i * 13) % 80) + "%");
+        img.style.setProperty("--delay", (i * 1) + "s");
+        img.style.setProperty("--dur", (15 + (i % 5) * 3) + "s");
+        wrap.appendChild(img);
+      });
+    }
+
+    (function initStarrySky() {
+      const c = document.getElementById("bgCanvas");
+      const ctx = c.getContext("2d");
+      let stars = [], shooting = [];
+      let offset1 = 0, offset2 = 0, nextShooting = 0;
+
+      function resize() {
+        c.width = innerWidth;
+        c.height = innerHeight;
+        stars = [];
+        const count = Math.floor((c.width * c.height) / 700);
+        for (let i = 0; i < count; i++) {
+          const isBig = Math.random() < 0.12;
+          stars.push({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height,
+            r: isBig ? Math.random() * 2 + 1.2 : Math.random() * 1.2 + 0.25,
+            twSpeed: Math.random() * 0.08 + 0.03,
+            twPhase: Math.random() * Math.PI * 2,
+            twMin: Math.random() * 0.15 + 0.1,
+            twMax: Math.random() * 0.5 + 0.5,
+            drift: (Math.random() - 0.5) * 0.08,
+            hue: Math.random() < 0.15 ? 200 + Math.random() * 55 : 255,
+            layer: Math.random() < 0.7 ? 1 : 2
+          });
+        }
+      }
+
+      function spawnShootingStar() {
+        const angle = (Math.random() * 0.4 + 0.15) * Math.PI;
+        const speed = 14 + Math.random() * 10;
+        shooting.push({
+          x: Math.random() * c.width * 0.85,
+          y: Math.random() * c.height * 0.45,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          width: 1.5 + Math.random() * 1.5
+        });
+      }
+
+      function drawStar(s, globalTime) {
+        const twinkle = s.twMin + (s.twMax - s.twMin) *
+          (0.5 + 0.5 * Math.sin(globalTime * s.twSpeed + s.twPhase));
+        const py = s.layer === 1
+          ? (s.y + offset1 + s.drift * globalTime) % (c.height + 30) - 15
+          : (s.y + offset2 + s.drift * globalTime * 0.5) % (c.height + 30) - 15;
+        const col = s.hue === 255 ? 255 : s.hue;
+        ctx.fillStyle = `rgba(${col},${col},255,${twinkle})`;
+        ctx.beginPath();
+        ctx.arc(s.x, py, s.r * (0.85 + twinkle * 0.3), 0, Math.PI * 2);
+        ctx.fill();
+        if (s.r > 1.3 && twinkle > 0.6) {
+          ctx.strokeStyle = `rgba(255,255,255,${twinkle * 0.35})`;
+          ctx.lineWidth = 0.6;
+          const gl = s.r * (2 + twinkle * 3);
+          ctx.beginPath();
+          ctx.moveTo(s.x - gl, py); ctx.lineTo(s.x + gl, py);
+          ctx.moveTo(s.x, py - gl); ctx.lineTo(s.x, py + gl);
+          ctx.stroke();
+        }
+      }
+
+      function drawShootingStar(s) {
+        const tailX = s.x - s.vx * 2.5;
+        const tailY = s.y - s.vy * 2.5;
+        const grad = ctx.createLinearGradient(s.x, s.y, tailX, tailY);
+        grad.addColorStop(0, `rgba(255,255,255,${s.life})`);
+        grad.addColorStop(0.15, `rgba(200,220,255,${s.life * 0.8})`);
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = s.width;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(tailX, tailY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.life})`;
+        ctx.fill();
+      }
+
+      let t0 = performance.now();
+      function draw(now) {
+        const globalTime = (now - t0) * 0.001;
+        ctx.clearRect(0, 0, c.width, c.height);
+        offset1 += 0.12;
+        offset2 += 0.04;
+
+        stars.forEach(s => drawStar(s, globalTime));
+
+        if (now > nextShooting) {
+          spawnShootingStar();
+          if (Math.random() < 0.35) spawnShootingStar();
+          nextShooting = now + 800 + Math.random() * 2200;
+        }
+
+        shooting = shooting.filter(s => {
+          s.life -= 0.018;
+          if (s.life <= 0) return false;
+          drawShootingStar(s);
+          s.x += s.vx;
+          s.y += s.vy;
+          return s.x < c.width + 200 && s.y < c.height + 200;
+        });
+
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      requestAnimationFrame(draw);
+      addEventListener("resize", resize);
+    })();
+
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+
+    function tierGeometry(scale, h) {
+      if (cakeChoices.shape === "square") {
+        return new THREE.BoxGeometry(1.85 * scale, h, 1.85 * scale);
+      }
+      if (cakeChoices.shape === "heart") {
+        const sh = new THREE.Shape();
+        const s = 0.55 * scale;
+        sh.moveTo(0, 0.3 * s);
+        sh.bezierCurveTo(0, 0.5 * s, 0.25 * s, 0.55 * s, 0.5 * s, 0.3 * s);
+        sh.bezierCurveTo(0.75 * s, 0.55 * s, 1 * s, 0.5 * s, 1 * s, 0.3 * s);
+        sh.bezierCurveTo(1 * s, -0.15 * s, 0.5 * s, -0.35 * s, 0.5 * s, -0.2 * s);
+        sh.bezierCurveTo(0.5 * s, -0.35 * s, 0, -0.15 * s, 0, 0.3 * s);
+        const geo = new THREE.ExtrudeGeometry(sh, {
+          depth: h, bevelEnabled: true, bevelThickness: 0.03,
+          bevelSize: 0.03, bevelSegments: 2, curveSegments: 24
+        });
+        geo.center();
+        return geo;
+      }
+      return new THREE.CylinderGeometry(1.02 * scale, 1.08 * scale, h, 36);
+    }
+
+    function createCandleWithFlame(x, y, z) {
+      const g = new THREE.Group();
+      const col = cakeChoices.candleColor;
+      const body = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.03, 0.038, 0.36, 10),
+        new THREE.MeshStandardMaterial({ color: col, roughness: 0.55 })
+      );
+      body.position.y = 0.18;
+      g.add(body);
+
+      const wick = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.007, 0.007, 0.035, 6),
+        new THREE.MeshStandardMaterial({ color: 0x111111 })
+      );
+      wick.position.y = 0.38;
+      g.add(wick);
+
+      const flameOuter = new THREE.Mesh(
+        new THREE.ConeGeometry(0.052, 0.13, 8),
+        new THREE.MeshBasicMaterial({ color: 0xff5500, transparent: true, opacity: 0.88 })
+      );
+      flameOuter.position.y = 0.46;
+      g.add(flameOuter);
+
+      const flameInner = new THREE.Mesh(
+        new THREE.ConeGeometry(0.028, 0.075, 8),
+        new THREE.MeshBasicMaterial({ color: 0xffdd44, transparent: true, opacity: 0.95 })
+      );
+      flameInner.position.y = 0.44;
+      g.add(flameInner);
+
+      const flameCore = new THREE.Mesh(
+        new THREE.SphereGeometry(0.018, 6, 6),
+        new THREE.MeshBasicMaterial({ color: 0xffffcc })
+      );
+      flameCore.position.y = 0.42;
+      g.add(flameCore);
+
+      const light = new THREE.PointLight(0xff7722, 0.32, 2.2);
+      light.position.y = 0.48;
+      g.add(light);
+
+      g.userData = { flameOuter, flameInner, flameCore, light, phase: Math.random() * 6.28 };
+      g.position.set(x, y, z);
+      flameGroups.push(g);
+      return g;
+    }
+
+    function addPiping(group, y, radius, color, count) {
+      const mat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.15 });
+      for (let i = 0; i < count; i++) {
+        const a = (i / count) * Math.PI * 2;
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.044, 8, 8), mat);
+        dot.position.set(Math.cos(a) * radius, y, Math.sin(a) * radius);
+        group.add(dot);
+      }
+    }
+
+    function addDrips(group, y, radius, color) {
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2;
+        const drip = new THREE.Mesh(
+          new THREE.CapsuleGeometry(0.048, 0.11, 4, 8),
+          new THREE.MeshStandardMaterial({ color, roughness: 0.35 })
+        );
+        drip.position.set(Math.cos(a) * radius, y - 0.05, Math.sin(a) * radius);
+        drip.rotation.z = Math.cos(a) * 0.28;
+        group.add(drip);
+      }
+    }
+
+    function addSprinkles(group, topY) {
+      if (cakeChoices.sprinkles === "none") return;
+      const colors = {
+        sugar: 0xffffff, choco_chip: 0x3d2314, pearl: 0xfff8f0,
+        rainbow: [0xff6b9d, 0xffd700, 0x7ec8e3, 0xc44dff, 0x98ff98]
+      };
+      for (let i = 0; i < 55; i++) {
+        const c = cakeChoices.sprinkles === "rainbow"
+          ? colors.rainbow[i % 5] : colors[cakeChoices.sprinkles];
+        const s = new THREE.Mesh(
+          new THREE.SphereGeometry(0.02 + Math.random() * 0.015, 6, 6),
+          new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.3 })
+        );
+        const a = Math.random() * Math.PI * 2;
+        const r = 0.2 + Math.random() * 0.8;
+        s.position.set(Math.cos(a) * r, topY + Math.random() * 0.06, Math.sin(a) * r);
+        group.add(s);
+      }
+    }
+
+    function addPearls(group, y, radius) {
+      for (let i = 0; i < 28; i++) {
+        const a = (i / 28) * Math.PI * 2;
+        const p = new THREE.Mesh(
+          new THREE.SphereGeometry(0.028, 8, 8),
+          new THREE.MeshStandardMaterial({
+            color: 0xfff8f0, emissive: 0xffffff, emissiveIntensity: 0.2,
+            metalness: 0.6, roughness: 0.2
+          })
+        );
+        p.position.set(Math.cos(a) * radius, y, Math.sin(a) * radius);
+        group.add(p);
+      }
+    }
+
+    function addRosettes(group, y, radius, color) {
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2;
+        const rosette = new THREE.Group();
+        for (let j = 0; j < 5; j++) {
+          const petal = new THREE.Mesh(
+            new THREE.SphereGeometry(0.06, 8, 8),
+            new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.1 })
+          );
+          const pa = a + j * 0.35;
+          petal.position.set(Math.cos(pa) * 0.09, 0, Math.sin(pa) * 0.09);
+          petal.scale.set(1, 0.5, 1);
+          rosette.add(petal);
+        }
+        const center = new THREE.Mesh(
+          new THREE.SphereGeometry(0.05, 8, 8),
+          new THREE.MeshStandardMaterial({ color: 0xfff0f5 })
+        );
+        rosette.add(center);
+        rosette.position.set(Math.cos(a) * radius * 0.75, y + 0.04, Math.sin(a) * radius * 0.75);
+        group.add(rosette);
+      }
+    }
+
+    function addRuffle(group, y, radius, color) {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(radius, 0.06, 8, 48),
+        new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.08 })
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = y;
+      group.add(ring);
+    }
+
+    function addChocoShards(group, y) {
+      for (let i = 0; i < 8; i++) {
+        const shard = new THREE.Mesh(
+          new THREE.BoxGeometry(0.12, 0.02, 0.18),
+          new THREE.MeshStandardMaterial({ color: 0x3d2314, roughness: 0.4 })
+        );
+        const a = (i / 8) * Math.PI * 2 + 0.2;
+        shard.position.set(Math.cos(a) * 0.55, y + 0.03, Math.sin(a) * 0.55);
+        shard.rotation.set(0.3, a, 0.2);
+        group.add(shard);
+      }
+    }
+
+    function addGoldGlitter(group, topY) {
+      for (let i = 0; i < 25; i++) {
+        const gl = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.018, 0),
+          new THREE.MeshStandardMaterial({
+            color: 0xffd700, emissive: 0xffaa00,
+            emissiveIntensity: 0.6, metalness: 0.8
+          })
+        );
+        const a = Math.random() * Math.PI * 2;
+        const r = 0.4 + Math.random() * 0.5;
+        gl.position.set(Math.cos(a) * r, topY + 0.05 + Math.random() * 0.15, Math.sin(a) * r);
+        gl.userData = { phase: Math.random() * 6.28, isGlitter: true };
+        group.add(gl);
+        glitterMeshes.push(gl);
+      }
+    }
+
+    function addPlateDecor(group) {
+      const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(1.88, 0.04, 8, 64),
+        new THREE.MeshStandardMaterial({
+          color: 0xd4af37, metalness: 0.7, roughness: 0.25,
+          emissive: 0x886622, emissiveIntensity: 0.15
+        })
+      );
+      rim.rotation.x = Math.PI / 2;
+      rim.position.y = 0.11;
+      group.add(rim);
+    }
+
+    function addTopping(group, t, i, total, yTop) {
+      const angle = (i / Math.max(total, 1)) * Math.PI * 2;
+      const r = 0.62 + (i % 3) * 0.14;
+      const x = Math.cos(angle) * r, z = Math.sin(angle) * r;
+      let mesh;
+
+      const sphere = (c, rad) => new THREE.Mesh(
+        new THREE.SphereGeometry(rad || 0.1, 12, 12),
+        new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.08 })
+      );
+
+      if (t === "strawberry") mesh = sphere(0xe63946);
+      else if (t === "cherry") mesh = sphere(0xdc143c, 0.09);
+      else if (t === "blueberry") mesh = sphere(0x4a6fa5, 0.08);
+      else if (t === "choco") {
+        mesh = new THREE.Mesh(
+          new THREE.BoxGeometry(0.13, 0.07, 0.13),
+          new THREE.MeshStandardMaterial({ color: 0x3d2314 })
+        );
+      } else if (t === "star") {
+        mesh = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.11, 0),
+          new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffaa00, emissiveIntensity: 0.4 })
+        );
+      } else if (t === "flower") {
+        mesh = new THREE.Group();
+        for (let p = 0; p < 6; p++) {
+          const pet = sphere(0xffb7c5, 0.05);
+          const pa = (p / 6) * Math.PI * 2;
+          pet.position.set(Math.cos(pa) * 0.08, 0, Math.sin(pa) * 0.08);
+          mesh.add(pet);
+        }
+        mesh.add(sphere(0xffe4b5, 0.04));
+      } else if (t === "bow") {
+        mesh = new THREE.Mesh(
+          new THREE.TorusGeometry(0.075, 0.028, 8, 16),
+          new THREE.MeshStandardMaterial({ color: 0xff1493 })
+        );
+      } else if (t === "kiwi") mesh = sphere(0x7cb342, 0.11);
+      else if (t === "oreo") {
+        mesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.09, 0.09, 0.04, 16),
+          new THREE.MeshStandardMaterial({ color: 0x2d2d2d })
+        );
+      } else if (t === "macaron") mesh = sphere(0xffc0cb, 0.09);
+      else if (t === "cookie") {
+        mesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.08, 0.08, 0.03, 12),
+          new THREE.MeshStandardMaterial({ color: 0xdeb887 })
+        );
+      } else return;
+
+      mesh.position.set(x, yTop, z);
+      group.add(mesh);
+    }
+
+    let cakeGroup, wishesGroup, photos3d, skyStars;
+
+    function init3D() {
+      if (sceneInited) return;
+      sceneInited = true;
+      flameGroups = [];
+      glitterMeshes = [];
+
+      const canvas = document.getElementById("canvas3d");
+      const scene = new THREE.Scene();
+      scene.background = null;
+      scene.fog = null;
+
+      const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 0.1, 100);
+      camera.position.set(0, 2.6, 6.8);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.3;
+
+      const labelRenderer = new CSS2DRenderer();
+      labelRenderer.setSize(innerWidth, innerHeight);
+      labelRenderer.domElement.style.cssText =
+        "position:absolute;top:0;left:0;pointer-events:none;z-index:15;";
+      document.getElementById("cake3dScreen").appendChild(labelRenderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0x8899ff, 0.45));
+      scene.add(new THREE.HemisphereLight(0xaabbff, 0x1a0828, 0.55));
+
+      const dir = new THREE.DirectionalLight(0xffffff, 1);
+      dir.position.set(5, 12, 6);
+      dir.castShadow = true;
+      dir.shadow.mapSize.set(2048, 2048);
+      scene.add(dir);
+
+      scene.add(new THREE.PointLight(0xff6b9d, 0.55, 30));
+      scene.add(new THREE.PointLight(0xffd700, 0.2, 15));
+
+      skyStars = new THREE.Group();
+      for (let i = 0; i < 300; i++) {
+        const s = new THREE.Mesh(
+          new THREE.SphereGeometry(0.012 + Math.random() * 0.02, 4, 4),
+          new THREE.MeshBasicMaterial({
+            color: Math.random() > 0.8 ? 0xaaccff : 0xffffff,
+            transparent: true,
+            opacity: 0.35 + Math.random() * 0.5
+          })
+        );
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI * 0.85;
+        const rad = 16 + Math.random() * 22;
+        s.position.set(
+          Math.sin(phi) * Math.cos(theta) * rad,
+          Math.cos(phi) * rad * 0.5 + 2,
+          Math.sin(phi) * Math.sin(theta) * rad
+        );
+        s.userData.twPhase = Math.random() * 6.28;
+        skyStars.add(s);
+      }
+      scene.add(skyStars);
+
+      cakeGroup = new THREE.Group();
+      const baseCol = new THREE.Color(cakeChoices.baseColor);
+      const frostCol = new THREE.Color(cakeChoices.frosting);
+      const fp = getFrostMatProps(cakeChoices.frostingType);
+      let y = 0.12;
+      const tierH = 0.42;
+
+      const plate = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.85, 1.9, 0.1, 48),
+        new THREE.MeshStandardMaterial({
+          color: cakeChoices.plateColor, metalness: 0.5, roughness: 0.28
+        })
+      );
+      plate.position.y = 0.05;
+      plate.receiveShadow = true;
+      cakeGroup.add(plate);
+      addPlateDecor(cakeGroup);
+
+      const fillingColors = {
+        strawberry: 0xff6b8a, choco: 0x4a2c2a, cheese: 0xfff8dc,
+        blueberry: 0x6a5acd, caramel: 0xc68e17
+      };
+
+      for (let t = 0; t < cakeChoices.tiers; t++) {
+        const scale = 1 - t * 0.17;
+        const isTop = t === cakeChoices.tiers - 1;
+        const geo = tierGeometry(scale, tierH);
+        const mat = new THREE.MeshStandardMaterial({
+          color: isTop ? frostCol : baseCol,
+          ...fp,
+          emissive: (isTop ? frostCol : baseCol).clone().multiplyScalar(0.07),
+          emissiveIntensity: isTop ? 0.4 : 0.15
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.y = y + tierH / 2;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        cakeGroup.add(mesh);
+
+        if (t < cakeChoices.tiers - 1) {
+          addRuffle(cakeGroup, y + tierH, 1.02 * scale, frostCol.clone().multiplyScalar(0.9));
+          if (cakeChoices.filling !== "none") {
+            const fill = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.98 * scale, 0.98 * scale, 0.07, 32),
+              new THREE.MeshStandardMaterial({
+                color: fillingColors[cakeChoices.filling] || 0xff69b4,
+                emissive: 0x221133,
+                emissiveIntensity: 0.15
+              })
+            );
+            fill.position.y = y + tierH + 0.02;
+            cakeGroup.add(fill);
+          }
+        }
+
+        if (isTop) {
+          const rad = 1.05 * scale;
+          const topY = y + tierH;
+          const br = cakeChoices.border;
+
+          if (br === "piping" || br === "dots") {
+            addPiping(cakeGroup, topY + 0.02, rad, frostCol, br === "dots" ? 36 : 22);
+          }
+          if (br === "ribbon") {
+            const ring = new THREE.Mesh(
+              new THREE.TorusGeometry(rad, 0.05, 10, 48),
+              new THREE.MeshStandardMaterial({
+                color: 0xff1493, emissive: 0xff1493, emissiveIntensity: 0.3
+              })
+            );
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = topY + 0.03;
+            cakeGroup.add(ring);
+          }
+
+          addPearls(cakeGroup, topY + 0.01, rad * 1.02);
+          addDrips(cakeGroup, topY - 0.04, rad * 0.95, frostCol);
+          addSprinkles(cakeGroup, topY);
+          addRosettes(cakeGroup, topY + 0.05, rad, frostCol);
+          addChocoShards(cakeGroup, topY + 0.04);
+          addGoldGlitter(cakeGroup, topY);
+        }
+        y += tierH;
+      }
+
+      const topY = y + 0.08;
+      cakeChoices.toppings.forEach((t, i) =>
+        addTopping(cakeGroup, t, i, cakeChoices.toppings.length, topY + 0.12)
+      );
+
+      const n = cakeChoices.candleCount;
+      for (let i = 0; i < n; i++) {
+        const ring = i < 12 ? 0.43 : 0.27;
+        const idx = i < 12 ? i : i - 12;
+        const count = i < 12 ? Math.min(n, 12) : n - 12;
+        const angle = (idx / count) * Math.PI * 2;
+        cakeGroup.add(createCandleWithFlame(
+          Math.cos(angle) * ring, topY + 0.05, Math.sin(angle) * ring
+        ));
+      }
+      scene.add(cakeGroup);
+
+      wishesGroup = new THREE.Group();
+      WISHES.forEach((text, i) => {
+        const div = document.createElement("div");
+        div.className = "wish-orbit-label";
+        div.textContent = text;
+        const label = new CSS2DObject(div);
+        const angle = (i / WISHES.length) * Math.PI * 2;
+        label.position.set(
+          Math.cos(angle) * 3.5,
+          0.9 + (i % 5) * 0.28,
+          Math.sin(angle) * 3.5
+        );
+        wishesGroup.add(label);
+      });
+      scene.add(wishesGroup);
+
+      photos3d = new THREE.Group();
+      const loader = new THREE.TextureLoader();
+      PHOTOS.forEach((url, i) => {
+       loader.load(url, (tex) => {
+          const plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.95, 0.72),
+            new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
+          );
+          const a = (i / PHOTOS.length) * Math.PI * 2;
+          plane.position.set(
+            Math.cos(a) * 5.5,
+            1.7 + (i % 3) * 0.35,
+            Math.sin(a) * 5.5
+          );
+          plane.lookAt(0, 1.5, 0);
+          photos3d.add(plane);
+        });
+      });
+
+      scene.add(photos3d);
+
+      const controls = new OrbitControls(camera, canvas);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 3.2;
+      controls.maxDistance = 14;
+      controls.target.set(0, 1.35, 0);
+
+      const t0 = performance.now();
+
+      function animateFlames() {
+        const time = performance.now() * 0.008;
+        flameGroups.forEach(obj => {
+          const u = obj.userData;
+          const t = time + u.phase;
+          const flick = 0.88 + Math.sin(t * 3.2) * 0.1 + Math.sin(t * 6.5) * 0.05;
+          u.flameOuter.scale.set(flick, 0.92 + Math.sin(t * 5) * 0.14, flick);
+          u.flameInner.scale.set(1, 0.85 + Math.sin(t * 7) * 0.18, 1);
+          u.light.intensity = 0.22 + Math.sin(t * 4) * 0.14;
+          u.flameOuter.position.y = 0.46 + Math.sin(t * 2.5) * 0.012;
+        });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const gt = (performance.now() - t0) * 0.001;
+
+        controls.update();
+        animateFlames();
+
+        glitterMeshes.forEach(g => {
+          g.position.y += Math.sin(gt * 3 + g.userData.phase) * 0.0008;
+          g.rotation.y += 0.02;
+        });
+
+        cakeGroup.rotation.y += 0.0035;
+        wishesGroup.rotation.y += 0.012;
+        photos3d.rotation.y += 0.004;
+
+        if (skyStars) {
+          skyStars.rotation.y += 0.0006;
+          skyStars.rotation.x = Math.sin(gt * 0.3) * 0.04;
+          skyStars.children.forEach(s => {
+            s.material.opacity = 0.25 + 0.5 * (0.5 + 0.5 * Math.sin(gt * 2 + s.userData.twPhase));
+          });
+        }
+
+        cakeGroup.scale.setScalar(1 + Math.sin(performance.now() * 0.001) * 0.006);
+
+        renderer.render(scene, camera);
+        labelRenderer.render(scene, camera);
+      }
+      animate();
+
+      addEventListener("resize", () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+        labelRenderer.setSize(innerWidth, innerHeight);
+      });
+    }
+
+    if (sessionStorage.getItem("unlocked") === "1") {
+      musicToggle.classList.add("visible");
+      showScreen("wizardScreen");
+      renderWizardStep();
+    }
+  </script>
+</body>
+</html>
