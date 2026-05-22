@@ -1,203 +1,498 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
+  <meta name="google-site-verification" content="CeDG0u2Dae52pbq9lPcH1jRwiIdOJN2HjEPX3g279pQ" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chúc Mừng Sinh Nhật</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: "Segoe UI", system-ui, sans-serif;
-      min-height: 100vh; color: #fff; overflow-x: hidden;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
       background: #020510;
     }
+
     .sky-bg {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
       overflow: hidden;
       background: linear-gradient(180deg, #020510 0%, #0a1035 45%, #12082a 100%);
       animation: skyPulse 8s ease-in-out infinite alternate;
     }
+
     @keyframes skyPulse {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(1.08); }
+      0% {
+        filter: brightness(1);
+      }
+
+      100% {
+        filter: brightness(1.08);
+      }
     }
-    .sky-bg::before, .sky-bg::after {
-      content: ""; position: absolute; inset: -50%; border-radius: 50%;
+
+    .sky-bg::before,
+    .sky-bg::after {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      border-radius: 50%;
       animation: auroraMove 20s ease-in-out infinite alternate;
     }
+
     .sky-bg::before {
-      background: radial-gradient(ellipse, rgba(100,150,255,0.3) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(100, 150, 255, 0.3) 0%, transparent 70%);
       animation-duration: 18s;
     }
+
     .sky-bg::after {
-      background: radial-gradient(ellipse, rgba(255,107,157,0.24) 0%, transparent 65%);
-      animation-duration: 24s; animation-delay: -8s;
+      background: radial-gradient(ellipse, rgba(255, 107, 157, 0.24) 0%, transparent 65%);
+      animation-duration: 24s;
+      animation-delay: -8s;
     }
+
     @keyframes auroraMove {
-      0% { transform: translate(-10%, -5%) rotate(0deg) scale(1); }
-      50% { transform: translate(15%, 10%) rotate(12deg) scale(1.12); }
-      100% { transform: translate(-5%, 12%) rotate(-8deg) scale(1.05); }
+      0% {
+        transform: translate(-10%, -5%) rotate(0deg) scale(1);
+      }
+
+      50% {
+        transform: translate(15%, 10%) rotate(12deg) scale(1.12);
+      }
+
+      100% {
+        transform: translate(-5%, 12%) rotate(-8deg) scale(1.05);
+      }
     }
+
     .cloud-layer {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.14;
-      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.18) 0%, transparent 50%),
-                  radial-gradient(circle at 70% 60%, rgba(255,255,255,0.12) 0%, transparent 45%);
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.14;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.12) 0%, transparent 45%);
       animation: cloudDrift 40s linear infinite;
     }
+
     @keyframes cloudDrift {
-      from { transform: translate(0, 0); }
-      to { transform: translate(-100px, 50px); }
+      from {
+        transform: translate(0, 0);
+      }
+
+      to {
+        transform: translate(-100px, 50px);
+      }
     }
-    #bgCanvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
     .orb {
-      position: fixed; border-radius: 50%; filter: blur(80px);
-      pointer-events: none; z-index: 1; opacity: 0.3;
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.3;
     }
+
     .orb1 {
-      width: 220px; height: 220px; background: #6b8cff; top: 18%; left: 8%;
+      width: 220px;
+      height: 220px;
+      background: #6b8cff;
+      top: 18%;
+      left: 8%;
       animation: orbDrift1 16s ease-in-out infinite, orbPulse 3s ease-in-out infinite;
     }
+
     .orb2 {
-      width: 200px; height: 200px; background: #c44dff; bottom: 22%; right: 10%;
+      width: 200px;
+      height: 200px;
+      background: #c44dff;
+      bottom: 22%;
+      right: 10%;
       animation: orbDrift2 20s ease-in-out infinite, orbPulse 4s ease-in-out infinite 1s;
     }
+
     @keyframes orbDrift1 {
-      0%, 100% { transform: translate(0, 0); }
-      33% { transform: translate(70px, -50px); }
-      66% { transform: translate(-35px, 45px); }
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      33% {
+        transform: translate(70px, -50px);
+      }
+
+      66% {
+        transform: translate(-35px, 45px);
+      }
     }
+
     @keyframes orbDrift2 {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(-60px, -70px); }
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(-60px, -70px);
+      }
     }
+
     @keyframes orbPulse {
-      0%, 100% { opacity: 0.22; }
-      50% { opacity: 0.38; }
+
+      0%,
+      100% {
+        opacity: 0.22;
+      }
+
+      50% {
+        opacity: 0.38;
+      }
     }
+
     .screen {
-      display: none; min-height: 100vh; flex-direction: column;
-      align-items: center; justify-content: center; padding: 20px;
-      position: relative; z-index: 2;
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
     }
-    .screen.active { display: flex; }
-    #loginScreen { text-align: center; }
-    #loginScreen h1 { font-size: 2rem; margin-bottom: 8px; text-shadow: 0 0 24px rgba(255,255,255,0.3); }
-    #loginScreen p { opacity: 0.85; margin-bottom: 18px; }
+
+    .screen.active {
+      display: flex;
+    }
+
+    #loginScreen {
+      text-align: center;
+    }
+
+    #loginScreen h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      text-shadow: 0 0 24px rgba(255, 255, 255, 0.3);
+    }
+
+    #loginScreen p {
+      opacity: 0.85;
+      margin-bottom: 18px;
+    }
+
     #loginScreen input {
-      padding: 14px 20px; font-size: 1.1rem; border: 2px solid #7b9fff;
-      border-radius: 12px; background: rgba(255,255,255,0.08); color: #fff;
-      width: min(300px, 92vw); margin-bottom: 12px;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      border: 2px solid #7b9fff;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      width: min(300px, 92vw);
+      margin-bottom: 12px;
     }
+
     .btn {
-      padding: 13px 28px; font-size: 1rem; border: none; border-radius: 12px;
-      cursor: pointer; background: linear-gradient(90deg, #ff6b9d, #7b9fff);
-      color: #fff; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;
+      padding: 13px 28px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #ff6b9d, #7b9fff);
+      color: #fff;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .btn:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(123,159,255,0.45); }
-    .btn-secondary { background: rgba(255,255,255,0.12); }
-    .error { color: #ff9a9a; margin-top: 10px; min-height: 1.2em; }
+
+    .btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 28px rgba(123, 159, 255, 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .error {
+      color: #ff9a9a;
+      margin-top: 10px;
+      min-height: 1.2em;
+    }
+
     .wizard-layout {
-      display: flex; gap: 20px; width: min(980px, 98vw);
-      align-items: flex-start; justify-content: center;
+      display: flex;
+      gap: 20px;
+      width: min(980px, 98vw);
+      align-items: flex-start;
+      justify-content: center;
     }
-    .wizard-main { flex: 1; min-width: 0; }
+
+    .wizard-main {
+      flex: 1;
+      min-width: 0;
+    }
+
     .wizard-sidebar {
-      width: 270px; flex-shrink: 0;
-      background: rgba(5,10,40,0.65); border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 16px; padding: 16px; backdrop-filter: blur(14px);
-      max-height: 85vh; overflow-y: auto;
+      width: 270px;
+      flex-shrink: 0;
+      background: rgba(5, 10, 40, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      padding: 16px;
+      backdrop-filter: blur(14px);
+      max-height: 85vh;
+      overflow-y: auto;
     }
-    .wizard-sidebar h3 { font-size: 1rem; margin-bottom: 10px; }
-    #chosenList { list-style: none; font-size: 0.86rem; line-height: 1.55; }
+
+    .wizard-sidebar h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    #chosenList {
+      list-style: none;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
     #chosenList li {
-      padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
+
     #chosenList .swatch {
-      width: 14px; height: 14px; border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.4); flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      flex-shrink: 0;
     }
-    #wizardScreen h2 { text-align: center; font-size: 1.3rem; margin-bottom: 6px; }
-    .step-indicator { text-align: center; opacity: 0.75; margin-bottom: 12px; font-size: 0.9rem; }
+
+    #wizardScreen h2 {
+      text-align: center;
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .step-indicator {
+      text-align: center;
+      opacity: 0.75;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
     .options {
-      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
-      max-height: 36vh; overflow-y: auto; padding: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-height: 36vh;
+      overflow-y: auto;
+      padding: 6px;
     }
+
     .option {
-      padding: 10px 14px; border: 2px solid rgba(255,255,255,0.18);
-      border-radius: 10px; cursor: pointer; transition: all 0.2s;
-      min-width: 78px; text-align: center; font-size: 0.88rem;
-      background: rgba(0,0,0,0.35);
+      padding: 10px 14px;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 78px;
+      text-align: center;
+      font-size: 0.88rem;
+      background: rgba(0, 0, 0, 0.35);
     }
-    .option:hover, .option.selected {
-      border-color: #7b9fff; background: rgba(123,159,255,0.22);
-      box-shadow: 0 0 14px rgba(123,159,255,0.35);
+
+    .option:hover,
+    .option.selected {
+      border-color: #7b9fff;
+      background: rgba(123, 159, 255, 0.22);
+      box-shadow: 0 0 14px rgba(123, 159, 255, 0.35);
     }
+
     .preview-cake {
-      width: 88px; height: 88px; margin: 12px auto 6px;
-      border: 4px solid rgba(255,255,255,0.3);
-      transition: all 0.35s; box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+      width: 88px;
+      height: 88px;
+      margin: 12px auto 6px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.35s;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
     }
-    .preview-cake.round { border-radius: 50%; }
-    .preview-cake.square { border-radius: 12px; }
-    .preview-cake.heart { border-radius: 50% 50% 42% 42%; transform: rotate(-45deg); }
-    .wizard-nav { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    .preview-cake.round {
+      border-radius: 50%;
+    }
+
+    .preview-cake.square {
+      border-radius: 12px;
+    }
+
+    .preview-cake.heart {
+      border-radius: 50% 50% 42% 42%;
+      transform: rotate(-45deg);
+    }
+
+    .wizard-nav {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     #cake3dScreen {
-      padding: 0; overflow: hidden; width: 100%;
-      min-height: 100vh; position: relative;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
     }
+
     #floatingPhotos {
-      position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden;
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      overflow: hidden;
     }
+
     .float-photo {
-      position: absolute; width: 86px; height: 86px; object-fit: cover;
-      border-radius: 14px; box-shadow: 0 10px 28px rgba(0,0,0,0.5);
-      border: 2px solid rgba(255,255,255,0.3); opacity: 0;
+      position: absolute;
+      width: 86px;
+      height: 86px;
+      object-fit: cover;
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
       animation: floatPhoto var(--dur) ease-in-out infinite;
-      animation-delay: var(--delay); left: var(--x);
+      animation-delay: var(--delay);
+      left: var(--x);
     }
+
     @keyframes floatPhoto {
-      0%, 100% { transform: translateY(105vh) rotate(-10deg) scale(0.82); opacity: 0; }
-      12% { opacity: 0.88; }
-      50% { transform: translateY(38vh) rotate(6deg) scale(1.04); opacity: 0.92; }
+
+      0%,
+      100% {
+        transform: translateY(105vh) rotate(-10deg) scale(0.82);
+        opacity: 0;
+      }
+
+      12% {
+        opacity: 0.88;
+      }
+
+      50% {
+        transform: translateY(38vh) rotate(6deg) scale(1.04);
+        opacity: 0.92;
+      }
     }
+
     #canvas3d {
-      width: 100%; height: 100vh; display: block;
-      position: relative; z-index: 10;
+      width: 100%;
+      height: 100vh;
+      display: block;
+      position: relative;
+      z-index: 10;
       background: transparent !important;
     }
+
     .wish-orbit-label {
-      color: #fff; font-size: 1rem; font-weight: 600; white-space: nowrap;
-      padding: 10px 20px; border-radius: 24px;
-      background: linear-gradient(135deg, rgba(255,107,157,0.6), rgba(123,159,255,0.5));
-      border: 1px solid rgba(255,255,255,0.55);
-      box-shadow: 0 0 28px rgba(255,200,255,0.55);
-      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
-      pointer-events: none; user-select: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 10px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.6), rgba(123, 159, 255, 0.5));
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 0 28px rgba(255, 200, 255, 0.55);
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+      user-select: none;
       animation: wishGlow 2s ease-in-out infinite alternate;
     }
+
     @keyframes wishGlow {
-      0% { box-shadow: 0 0 20px rgba(255,180,255,0.4); }
-      100% { box-shadow: 0 0 36px rgba(123,159,255,0.7); }
+      0% {
+        box-shadow: 0 0 20px rgba(255, 180, 255, 0.4);
+      }
+
+      100% {
+        box-shadow: 0 0 36px rgba(123, 159, 255, 0.7);
+      }
     }
+
     #musicToggle {
-      position: fixed; top: 12px; right: 12px; z-index: 1000;
-      width: 46px; height: 46px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.55);
-      color: #fff; font-size: 1.25rem; cursor: pointer; display: none;
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 1000;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: none;
     }
-    #musicToggle.visible { display: block; }
+
+    #musicToggle.visible {
+      display: block;
+    }
+
     #musicHint {
-      position: fixed; top: 64px; right: 12px; z-index: 1000;
-      background: rgba(0,0,0,0.78); padding: 8px 12px; border-radius: 8px;
-      font-size: 0.84rem; display: none; cursor: pointer; max-width: 220px;
+      position: fixed;
+      top: 64px;
+      right: 12px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.78);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      display: none;
+      cursor: pointer;
+      max-width: 220px;
     }
+
     @media (max-width: 800px) {
-      .wizard-layout { flex-direction: column; }
-      .wizard-sidebar { width: 100%; max-height: none; }
+      .wizard-layout {
+        flex-direction: column;
+      }
+
+      .wizard-sidebar {
+        width: 100%;
+        max-height: none;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="sky-bg"></div>
   <div class="cloud-layer"></div>
@@ -235,7 +530,8 @@
         <h3>🧁 Đã chọn</h3>
         <ul id="chosenList"></ul>
         <div class="preview-cake round" id="previewCake"></div>
-        <small id="previewText" style="opacity:0.8;display:block;text-align:center;font-size:0.8rem">Xem trước bánh</small>
+        <small id="previewText" style="opacity:0.8;display:block;text-align:center;font-size:0.8rem">Xem trước
+          bánh</small>
       </aside>
     </div>
   </section>
@@ -276,21 +572,21 @@
     ];
 
     const PHOTOS = [
-       	"images/1.jpg",
-  	"images/2.jpg",
-  	"images/3.jpg",
-	"images/4.jpg",
-  	"images/5.jpg",
-  	"images/6.jpg",
-        "images/7.jpg",
-  	"images/8.jpg",
-  	"images/9.jpg",
-	"images/10.jpg",
-  	"images/11.jpg",
-  	"images/12.jpg",
-	"images/13.jpg",
-  	"images/14.jpg",
-  	"images/15.jpg"
+      "images/1.jpg",
+      "images/2.jpg",
+      "images/3.jpg",
+      "images/4.jpg",
+      "images/5.jpg",
+      "images/6.jpg",
+      "images/7.jpg",
+      "images/8.jpg",
+      "images/9.jpg",
+      "images/10.jpg",
+      "images/11.jpg",
+      "images/12.jpg",
+      "images/13.jpg",
+      "images/14.jpg",
+      "images/15.jpg"
     ];
     // ==========================================
 
@@ -313,60 +609,85 @@
     };
 
     const WIZARD_STEPS = [
-      { title: "Hình bánh", key: "shape", options: [
-        { label: "⭕ Tròn", value: "round" }, { label: "⬜ Vuông", value: "square" }, { label: "💗 Tim", value: "heart" }
-      ]},
-      { title: "Số tầng", key: "tiers", options: [
-        { label: "1 tầng", value: 1 }, { label: "2 tầng", value: 2 }, { label: "3 tầng", value: 3 }
-      ]},
-      { title: "Màu bột bánh", key: "baseColor", options: [
-        { label: "Kem", value: "#f5d0a9" }, { label: "Sô-cô-la", value: "#5c4033" },
-        { label: "Matcha", value: "#90c695" }, { label: "Red velvet", value: "#8b2942" }, { label: "Vani", value: "#fff8e7" }
-      ]},
-      { title: "Vị bột", key: "baseFlavor", options: [
-        { label: "Vani", value: "vanilla" }, { label: "Sô-cô-la", value: "chocolate" },
-        { label: "Dâu", value: "strawberry" }, { label: "Cà phê", value: "coffee" },
-        { label: "Chanh", value: "lemon" }, { label: "Dừa", value: "coconut" }
-      ]},
-      { title: "Loại kem", key: "frostingType", options: [
-        { label: "Kem bông", value: "buttercream" }, { label: "Cream cheese", value: "creamcheese" },
-        { label: "Ganache", value: "ganache" }, { label: "Mirror", value: "mirror" }
-      ]},
-      { title: "Màu kem", key: "frosting", options: [
-        { label: "Hồng", value: "#ff69b4" }, { label: "Trắng", value: "#fffafa" },
-        { label: "Tím", value: "#c44dff" }, { label: "Mint", value: "#98ff98" },
-        { label: "Vàng", value: "#ffd700" }, { label: "Đen", value: "#2d2d2d" }
-      ]},
-      { title: "Nhân bánh", key: "filling", options: [
-        { label: "Không", value: "none" }, { label: "Kem dâu", value: "strawberry" },
-        { label: "Chocolate", value: "choco" }, { label: "Phô mai", value: "cheese" },
-        { label: "Việt quất", value: "blueberry" }, { label: "Caramel", value: "caramel" }
-      ]},
-      { title: "Rắc / chip", key: "sprinkles", options: [
-        { label: "Không", value: "none" }, { label: "Đường", value: "sugar" },
-        { label: "Socola chip", value: "choco_chip" }, { label: "Ngọc trai", value: "pearl" }, { label: "Cầu vồng", value: "rainbow" }
-      ]},
-      { title: "Viền", key: "border", options: [
-        { label: "Không", value: "none" }, { label: "Đường kem", value: "piping" },
-        { label: "Chấm bi", value: "dots" }, { label: "Ruy băng", value: "ribbon" }
-      ]},
-      { title: "Màu đĩa", key: "plateColor", options: [
-        { label: "Trắng", value: "#ffffff" }, { label: "Vàng gold", value: "#d4af37" },
-        { label: "Hồng", value: "#ffc0cb" }, { label: "Đen", value: "#1a1a1a" }
-      ]},
-      { title: "Topping (nhiều)", key: "toppings", multi: true, options: [
-        { label: "🍓 Dâu", value: "strawberry" }, { label: "🫐 Việt quất", value: "blueberry" },
-        { label: "🍫 Socola", value: "choco" }, { label: "🍒 Cherry", value: "cherry" },
-        { label: "⭐ Sao", value: "star" }, { label: "🌸 Hoa", value: "flower" },
-        { label: "🎀 Nơ", value: "bow" }, { label: "🥝 Kiwi", value: "kiwi" },
-        { label: "🍪 Oreo", value: "oreo" }, { label: "🧁 Macaron", value: "macaron" }, { label: "🍪 Cookie", value: "cookie" }
-      ]},
-      { title: "Màu nến", key: "candleColor", options: [
-        { label: "Vàng", value: "#ffee88" }, { label: "Hồng", value: "#ff69b4" },
-        { label: "Xanh", value: "#7ec8e3" }, { label: "Trắng", value: "#fffafa" }, { label: "Tím", value: "#c44dff" }
-      ]},
-      { title: "Số nến (1–23)", key: "candleCount", options:
-        Array.from({ length: 23 }, (_, i) => ({ label: String(i + 1), value: i + 1 }))
+      {
+        title: "Hình bánh", key: "shape", options: [
+          { label: "⭕ Tròn", value: "round" }, { label: "⬜ Vuông", value: "square" }, { label: "💗 Tim", value: "heart" }
+        ]
+      },
+      {
+        title: "Số tầng", key: "tiers", options: [
+          { label: "1 tầng", value: 1 }, { label: "2 tầng", value: 2 }, { label: "3 tầng", value: 3 }
+        ]
+      },
+      {
+        title: "Màu bột bánh", key: "baseColor", options: [
+          { label: "Kem", value: "#f5d0a9" }, { label: "Sô-cô-la", value: "#5c4033" },
+          { label: "Matcha", value: "#90c695" }, { label: "Red velvet", value: "#8b2942" }, { label: "Vani", value: "#fff8e7" }
+        ]
+      },
+      {
+        title: "Vị bột", key: "baseFlavor", options: [
+          { label: "Vani", value: "vanilla" }, { label: "Sô-cô-la", value: "chocolate" },
+          { label: "Dâu", value: "strawberry" }, { label: "Cà phê", value: "coffee" },
+          { label: "Chanh", value: "lemon" }, { label: "Dừa", value: "coconut" }
+        ]
+      },
+      {
+        title: "Loại kem", key: "frostingType", options: [
+          { label: "Kem bông", value: "buttercream" }, { label: "Cream cheese", value: "creamcheese" },
+          { label: "Ganache", value: "ganache" }, { label: "Mirror", value: "mirror" }
+        ]
+      },
+      {
+        title: "Màu kem", key: "frosting", options: [
+          { label: "Hồng", value: "#ff69b4" }, { label: "Trắng", value: "#fffafa" },
+          { label: "Tím", value: "#c44dff" }, { label: "Mint", value: "#98ff98" },
+          { label: "Vàng", value: "#ffd700" }, { label: "Đen", value: "#2d2d2d" }
+        ]
+      },
+      {
+        title: "Nhân bánh", key: "filling", options: [
+          { label: "Không", value: "none" }, { label: "Kem dâu", value: "strawberry" },
+          { label: "Chocolate", value: "choco" }, { label: "Phô mai", value: "cheese" },
+          { label: "Việt quất", value: "blueberry" }, { label: "Caramel", value: "caramel" }
+        ]
+      },
+      {
+        title: "Rắc / chip", key: "sprinkles", options: [
+          { label: "Không", value: "none" }, { label: "Đường", value: "sugar" },
+          { label: "Socola chip", value: "choco_chip" }, { label: "Ngọc trai", value: "pearl" }, { label: "Cầu vồng", value: "rainbow" }
+        ]
+      },
+      {
+        title: "Viền", key: "border", options: [
+          { label: "Không", value: "none" }, { label: "Đường kem", value: "piping" },
+          { label: "Chấm bi", value: "dots" }, { label: "Ruy băng", value: "ribbon" }
+        ]
+      },
+      {
+        title: "Màu đĩa", key: "plateColor", options: [
+          { label: "Trắng", value: "#ffffff" }, { label: "Vàng gold", value: "#d4af37" },
+          { label: "Hồng", value: "#ffc0cb" }, { label: "Đen", value: "#1a1a1a" }
+        ]
+      },
+      {
+        title: "Topping (nhiều)", key: "toppings", multi: true, options: [
+          { label: "🍓 Dâu", value: "strawberry" }, { label: "🫐 Việt quất", value: "blueberry" },
+          { label: "🍫 Socola", value: "choco" }, { label: "🍒 Cherry", value: "cherry" },
+          { label: "⭐ Sao", value: "star" }, { label: "🌸 Hoa", value: "flower" },
+          { label: "🎀 Nơ", value: "bow" }, { label: "🥝 Kiwi", value: "kiwi" },
+          { label: "🍪 Oreo", value: "oreo" }, { label: "🧁 Macaron", value: "macaron" }, { label: "🍪 Cookie", value: "cookie" }
+        ]
+      },
+      {
+        title: "Màu nến", key: "candleColor", options: [
+          { label: "Vàng", value: "#ffee88" }, { label: "Hồng", value: "#ff69b4" },
+          { label: "Xanh", value: "#7ec8e3" }, { label: "Trắng", value: "#fffafa" }, { label: "Tím", value: "#c44dff" }
+        ]
+      },
+      {
+        title: "Số nến (1–23)", key: "candleCount", options:
+          Array.from({ length: 23 }, (_, i) => ({ label: String(i + 1), value: i + 1 }))
       }
     ];
 
@@ -456,8 +777,10 @@
         { label: "Rắc", text: LABELS.sprinkles[cakeChoices.sprinkles] },
         { label: "Viền", text: LABELS.border[cakeChoices.border] },
         { label: "Đĩa", color: cakeChoices.plateColor },
-        { label: "Topping", text: cakeChoices.toppings.length
-            ? cakeChoices.toppings.map(t => LABELS.topping[t] || t).join(", ") : "Chưa chọn" },
+        {
+          label: "Topping", text: cakeChoices.toppings.length
+            ? cakeChoices.toppings.map(t => LABELS.topping[t] || t).join(", ") : "Chưa chọn"
+        },
         { label: "Nến", text: `${cakeChoices.candleCount} cây` }
       ];
       ul.innerHTML = items.map(it => {
@@ -1113,7 +1436,7 @@
       photos3d = new THREE.Group();
       const loader = new THREE.TextureLoader();
       PHOTOS.forEach((url, i) => {
-       loader.load(url, (tex) => {
+        loader.load(url, (tex) => {
           const plane = new THREE.Mesh(
             new THREE.PlaneGeometry(0.95, 0.72),
             new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
@@ -1199,4 +1522,5 @@
     }
   </script>
 </body>
+
 </html>
